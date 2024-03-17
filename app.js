@@ -2,7 +2,6 @@ var express = require("express");
 var cors = require("cors");
 var app = express();
 var dotenv = require("dotenv");
-// const csv = require("fast-csv");
 
 const path = require("path");
 
@@ -15,11 +14,17 @@ const mysql = require("mysql2");
 
 dotenv.config();
 
-const conn = mysql.createConnection({
+const pool = mysql.createConnection({
+  // connectionLimit: 10,
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
+  keepAlive: true,
+});
+
+pool.on('error', function(err) {
+  console.error('MySQL Pool Error:', err.message);
 });
 
 // multer config
@@ -78,71 +83,190 @@ app.get('/', (req, res)=>{
 // api path
 
 app.post("/login", (req, res, next) => {
-  login(conn, req, res, next);
+  pool.getConnection(function(err, conn) {
+    if (err) {
+      console.error('Error getting MySQL connection from pool:', err);
+      return next(err);
+    }
+    login(conn, req, res, next);
+    conn.release();
+  });
 });
 
 app.post("/upcoming-event", (req, res) => {
-  upComing(conn, req, res);
+  pool.getConnection(function(err, conn) {
+    if (err) {
+      console.error('Error getting MySQL connection from pool:', err);
+      return next(err);
+    }
+    upComing(conn, req, res);
+    conn.release();
+  });
 });
 
 app.post("/getfiles", (req, res) => {
-  getfiles(conn, req, res);
+  pool.getConnection(function(err, conn) {
+    if (err) {
+      console.error('Error getting MySQL connection from pool:', err);
+      return next(err);
+    }
+    getfiles(conn, req, res);
+    conn.release();
+  });
 });
 
 app.post("/getWishlist", (req, res) => {
-  getWishlist(conn, req, res);
+  pool.getConnection(function(err, conn) {
+    if (err) {
+      console.error('Error getting MySQL connection from pool:', err);
+      return next(err);
+    }
+    getWishlist(conn, req, res);
+    conn.release();
+  });
 });
 
 app.post("/manageWishList", (req, res) => {
-  manageWishList(conn, req, res);
+  pool.getConnection(function(err, conn) {
+    if (err) {
+      console.error('Error getting MySQL connection from pool:', err);
+      return next(err);
+    }
+    manageWishList(conn, req, res);
+    conn.release();
+  });
 });
 
 app.post("/fetchprv", (req, res, next) => {
-  fetchprv(conn, req, res);
+  pool.getConnection(function(err, conn) {
+    if (err) {
+      console.error('Error getting MySQL connection from pool:', err);
+      return next(err);
+    }
+    fetchprv(conn, req, res);
+    conn.release();
+  });
 });
 
 app.post("/fetchType", (req, res, next) => {
-  fetchType(conn, req, res);
+  pool.getConnection(function(err, conn) {
+    if (err) {
+      console.error('Error getting MySQL connection from pool:', err);
+      return next(err);
+    }
+    fetchType(conn, req, res);
+    conn.release();
+  });
 });
 
 app.post("/fetchSearchResult", (req, res, next) => {
-  fetchSearchResult(conn, req, res);
+  pool.getConnection(function(err, conn) {
+    if (err) {
+      console.error('Error getting MySQL connection from pool:', err);
+      return next(err);
+    }
+    fetchSearchResult(conn, req, res);
+    conn.release();
+  });
 });
 
 app.post("/fetchCoDetails", (req, res, next) => {
-  fetchCoDetails(conn, req, res);
+  pool.getConnection(function(err, conn) {
+    if (err) {
+      console.error('Error getting MySQL connection from pool:', err);
+      return next(err);
+    }
+    fetchCoDetails(conn, req, res);
+    conn.release();
+  });
 });
 
 app.post("/editCo", (req, res, next) => {
-  editCo(conn, req, res);
+    pool.getConnection(function(err, conn) {
+    if (err) {
+      console.error('Error getting MySQL connection from pool:', err);
+      return next(err);
+    }
+    editCo(conn, req, res);
+    conn.release();
+  });
 });
 
 app.post("/updateUser", (req, res, next) => {
-  updateUser(conn, req, res);
+    pool.getConnection(function(err, conn) {
+    if (err) {
+      console.error('Error getting MySQL connection from pool:', err);
+      return next(err);
+    }
+    updateUser(conn, req, res);
+    conn.release();
+  });
 });
 
 app.post("/resetPassword", (req, res, next) => {
-  resetPassword(conn, req, res);
+    pool.getConnection(function(err, conn) {
+    if (err) {
+      console.error('Error getting MySQL connection from pool:', err);
+      return next(err);
+    }
+    resetPassword(conn, req, res);
+    conn.release();
+  });
 });
 
 app.post("/docsManage", (req, res, next) => {
-  docsManage(conn, req, res);
+    pool.getConnection(function(err, conn) {
+    if (err) {
+      console.error('Error getting MySQL connection from pool:', err);
+      return next(err);
+    }
+    docsManage(conn, req, res);
+    conn.release();
+  });
 });
 
 app.post("/manageTime", (req, res, next) => {
-  manageTime(conn, req, res);
+    pool.getConnection(function(err, conn) {
+    if (err) {
+      console.error('Error getting MySQL connection from pool:', err);
+      return next(err);
+    }
+    manageTime(conn, req, res);
+    conn.release();
+  });
 });
 
 app.post("/fetchMinor", (req, res) => {
-  fetchMinor(conn, req, res);
+    pool.getConnection(function(err, conn) {
+    if (err) {
+      console.error('Error getting MySQL connection from pool:', err);
+      return next(err);
+    }
+    fetchMinor(conn, req, res);
+    conn.release();
+  });
 });
 
 app.post("/studentquery", (req, res) => {
-  studentquery(conn, req, res);
+    pool.getConnection(function(err, conn) {
+    if (err) {
+      console.error('Error getting MySQL connection from pool:', err);
+      return next(err);
+    }
+    studentquery(conn, req, res);
+    conn.release();
+  });
 });
 
 app.post("/uploadStudentCSV", upload.single("studentCSV"), (req, res) => {
-  uploadStudentCSV(conn, req, res)
+    pool.getConnection(function(err, conn) {
+    if (err) {
+      console.error('Error getting MySQL connection from pool:', err);
+      return next(err);
+    }
+    uploadStudentCSV(conn, req, res)
+    conn.release();
+  });
 });
 
 app.post(
@@ -176,7 +300,14 @@ app.post(
       const fieldName = uploadedFields[0];
       const filePath = req.files[fieldName][0].path;
 
-      uploadCompanyData(conn, fieldName, filePath, res);
+      pool.getConnection(function(err, conn) {
+        if (err) {
+          console.error('Error getting MySQL connection from pool:', err);
+          return next(err);
+        }
+        uploadCompanyData(conn, fieldName, filePath, res);
+        conn.release();
+      });
     } catch (error) {
       console.error("Error handling file upload:", error);
       res.status(500).send("Internal Server Error");
@@ -185,15 +316,36 @@ app.post(
 );
 
 app.post('/manageStudent', (req, res)=>{
-  manageStudent(conn, req, res)
+    pool.getConnection(function(err, conn) {
+    if (err) {
+      console.error('Error getting MySQL connection from pool:', err);
+      return next(err);
+    }
+    manageStudent(conn, req, res)
+    conn.release();
+  });
 })
 
 app.post('/manageCompany', (req, res)=>{
-  manageCompany(conn, req, res)
+    pool.getConnection(function(err, conn) {
+    if (err) {
+      console.error('Error getting MySQL connection from pool:', err);
+      return next(err);
+    }
+    manageCompany(conn, req, res)
+    conn.release();
+  });
 })
 
 app.post('/manageContact', (req, res)=>{
-  manageContact(conn, req, res)
+    pool.getConnection(function(err, conn) {
+    if (err) {
+      console.error('Error getting MySQL connection from pool:', err);
+      return next(err);
+    }
+    manageContact(conn, req, res)
+    conn.release();
+  });
 })
 
 app.listen(process.env.PORT, function () {
