@@ -2,7 +2,7 @@ function resetPassword(conn, req, res) {
     const { oldPassword, newPassword, username } = req.body;
 
     function auth(oldPassword) {
-      const query1 = "SELECT password FROM user WHERE username = ?";
+      const query1 = "SELECT password FROM users WHERE username = ?";
       conn.query(query1, [username], (err, result) => {
         if (err) {
           return res.json({ status: "error", msg: err.message });

@@ -4,7 +4,7 @@ function getWishlist(conn, req, res) {
       const query = `SELECT DISTINCT c.*, co.contact_name,
       co.department, co.contact_tel, co.email
       FROM wishlist w
-      JOIN user u ON w.std_id = u.username
+      JOIN users u ON w.std_id = u.username
       JOIN company c ON w.co_id = c.co_id
       LEFT JOIN co_contact co ON w.co_id = co.co_id
       WHERE w.std_id = ${username}

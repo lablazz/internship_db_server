@@ -77,7 +77,7 @@ function fetchSearchResult(conn, req, res) {
     SELECT DISTINCT co.*
     FROM company co
     ${view ? "JOIN senior_intern istd ON co.co_id = istd.co_id" : ""}
-    ${view ? "LEFT JOIN user u ON istd.std_id = u.username" : ""}
+    ${view ? "LEFT JOIN users u ON istd.std_id = u.username" : ""}
     WHERE ${view ? internTypeFilter() : ""}
     ${coTypeFilter()}
     ${prv !== "" ? `AND co.co_prv = ?` : ""}
@@ -111,8 +111,8 @@ function fetchCoDetails(conn, req, res) {
   istd.intern_type, c.comment 
   FROM company co
   JOIN senior_intern istd ON co.co_id = istd.co_id
-  LEFT JOIN user u ON istd.std_id = u.username
-  LEFT JOIN comment c ON istd.std_id = c.std_id
+  LEFT JOIN users u ON istd.std_id = u.username
+  LEFT JOIN comments c ON istd.std_id = c.std_id
   WHERE co.co_id = ? AND NOT istd.intern_type = "" AND NOT istd.std_id = ''
   ORDER BY istd.std_id;
   `;
@@ -152,7 +152,7 @@ function fetchCoDetails(conn, req, res) {
 }
 
 function fetchMinor(conn, req, res) {
-  let query = 'SELECT DISTINCT minor FROM user WHERE minor IS NOT NULL AND NOT minor = "" ORDER BY minor'
+  let query = 'SELECT DISTINCT minor FROM users WHERE minor IS NOT NULL AND NOT minor = "" ORDER BY minor'
   conn.query(query, (err, result)=>{
     if (err) {
       return res.json({ status: "error", msg: err.message });

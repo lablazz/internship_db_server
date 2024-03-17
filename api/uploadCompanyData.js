@@ -133,7 +133,7 @@ const uploadCompanyData = async (conn, fieldName, filePath, res) => {
               }
             } else if (dbcol === "comments") {
               // Handle comments logic
-              query = `SELECT * FROM comment 
+              query = `SELECT * FROM comments 
               WHERE co_id = ${conn.escape(
                 row.co_id
               )} AND std_id = ${conn.escape(row.std_id)}`;

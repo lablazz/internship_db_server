@@ -20,7 +20,7 @@ async function uploadStudentCSV(conn, req, res) {
   
       for (let row of csvRows) {
         const result = await new Promise((resolve, reject) => {
-          conn.query("SELECT * FROM user WHERE username = ?", [row.username], (error, result) => {
+          conn.query("SELECT * FROM users WHERE username = ?", [row.username], (error, result) => {
             if (error) {
               reject(error);
             } else {

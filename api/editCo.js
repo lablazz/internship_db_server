@@ -21,7 +21,7 @@ function editCo(conn, req, res) {
     } else if (action == "del") {
       try {
         const query = `
-        DELETE FROM comment
+        DELETE FROM comments
         WHERE co_id = ? AND std_id = ?;
         `;
         conn.query(query, [co_id, std_id], (err, result) => {
