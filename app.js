@@ -71,6 +71,10 @@ const { manageStudent } = require("./api/manageStudent");
 const { manageCompany } = require("./api/manageCompany");
 const { manageContact } = require("./api/ManageContact");
 
+app.get('/', (req, res)=>{
+  res.send("Connected to web server")
+})
+
 // api path
 
 app.post("/login", (req, res, next) => {
