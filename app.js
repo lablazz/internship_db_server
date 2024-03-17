@@ -1,3 +1,27 @@
+const { login } = require("./api/login");
+const { upComing } = require("./api/up-coming");
+const { getfiles } = require("./api/getfiles");
+const { getWishlist } = require("./api/getWishlist");
+const { manageWishList } = require("./api/manageWishList");
+const {
+  fetchprv,
+  fetchType,
+  fetchSearchResult,
+  fetchCoDetails,
+  fetchMinor,
+} = require("./api/fetches");
+const { editCo } = require("./api/editCo");
+const { updateUser } = require("./api/updateUser");
+const { resetPassword } = require("./api/resetPassword");
+const { docsManage } = require("./api/docsManage");
+const { manageTime } = require("./api/manageTime");
+const { studentquery } = require("./api/studentquery");
+const { uploadCompanyData } = require("./api/uploadCompanyData");
+const { uploadStudentCSV } = require("./api/uploadSudentCSV");
+const { manageStudent } = require("./api/manageStudent");
+const { manageCompany } = require("./api/manageCompany");
+const { manageContact } = require("./api/ManageContact");
+
 var express = require("express");
 var cors = require("cors");
 var app = express();
@@ -14,17 +38,27 @@ const mysql = require("mysql2");
 
 dotenv.config();
 
-const pool = mysql.createConnection({
-  // connectionLimit: 10,
+let pool = mysql.createPool({
+  connectionLimit: 10,
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  keepAlive: true,
+  connectTimeout: 10000, // Increase connect timeout as needed
 });
 
-pool.on('error', function(err) {
-  console.error('MySQL Pool Error:', err.message);
+pool.on('error', (err) => {
+  console.error('MySQL Pool Error:', err);
+});
+
+// Log when a connection is created
+pool.on('connection', (connection) => {
+  console.log('New connection created:', connection.threadId);
+});
+
+// Log when a connection is released
+pool.on('release', (connection) => {
+  console.log('Connection released:', connection.threadId);
 });
 
 // multer config
@@ -49,32 +83,6 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 app.use(jsonParser);
-
-// api import
-
-const { login } = require("./api/login");
-const { upComing } = require("./api/up-coming");
-const { getfiles } = require("./api/getfiles");
-const { getWishlist } = require("./api/getWishlist");
-const { manageWishList } = require("./api/manageWishList");
-const {
-  fetchprv,
-  fetchType,
-  fetchSearchResult,
-  fetchCoDetails,
-  fetchMinor,
-} = require("./api/fetches");
-const { editCo } = require("./api/editCo");
-const { updateUser } = require("./api/updateUser");
-const { resetPassword } = require("./api/resetPassword");
-const { docsManage } = require("./api/docsManage");
-const { manageTime } = require("./api/manageTime");
-const { studentquery } = require("./api/studentquery");
-const { uploadCompanyData } = require("./api/uploadCompanyData");
-const { uploadStudentCSV } = require("./api/uploadSudentCSV");
-const { manageStudent } = require("./api/manageStudent");
-const { manageCompany } = require("./api/manageCompany");
-const { manageContact } = require("./api/ManageContact");
 
 app.get('/', (req, res)=>{
   res.send("Connected to web server")
