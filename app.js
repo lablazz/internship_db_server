@@ -50,7 +50,7 @@ app.use(jsonParser);
 const { login } = require("./api/login");
 const { upComing } = require("./api/up-coming");
 const { getfiles } = require("./api/getfiles");
-const { getWishlist } = require("./api/getwishlist");
+const { getWishlist } = require("./api/getWishlist");
 const { manageWishList } = require("./api/manageWishList");
 const {
   fetchprv,
