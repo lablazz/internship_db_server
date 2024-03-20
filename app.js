@@ -16,7 +16,7 @@ const mysql = require("mysql2");
 dotenv.config();
 
 const sslOptions = {
-  ca: fs.readFileSync('./ca.pem'),
+  ca: fs.readFileSync(process.env.CA_PER),
   // cert: fs.readFileSync('/path/to/client-cert.pem'),
   // key: fs.readFileSync('/path/to/client-key.pem'),
 };
