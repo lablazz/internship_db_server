@@ -7,8 +7,8 @@ const uploadCompanyData = async (conn, fieldName, filePath, res) => {
         ? "company"
         : fieldName === "companyContacts"
         ? "co_contact"
-        : fieldName === 'interns'
-        ? 'interns'
+        : fieldName === "interns"
+        ? "interns"
         : "comments";
 
     const csvRows = [];
@@ -184,9 +184,8 @@ const uploadCompanyData = async (conn, fieldName, filePath, res) => {
                   }
                 );
               }
-            }
-            else if (dbcol === 'interns') {
-                query = `SELECT * FROM senior_intern 
+            } else if (dbcol === "interns") {
+              query = `SELECT * FROM senior_intern 
               WHERE co_id = ${conn.escape(
                 row.co_id
               )} AND std_id = ${conn.escape(row.std_id)}`;
@@ -221,22 +220,24 @@ const uploadCompanyData = async (conn, fieldName, filePath, res) => {
                 );
               } else {
                 if (row.std_id && row.co_id) {
-                    let insertQuery = `
+                  let insertQuery = `
                         INSERT INTO senior_intern (co_id, std_id, intern_type)
                         VALUES (?, ?, ?)`;
-    
-                    conn.query(
-                      insertQuery,
-                      [row.co_id, row.std_id, row.intern_type],
-                      (error, insertResult) => {
-                        if (error) {
-                          return res.json({ status: "error", msg: error });
-                        }
-                        if (insertResult) {
-                          insertCount += 1;
-                        }
+
+                  conn.query(
+                    insertQuery,
+                    [row.co_id, row.std_id, row.intern_type],
+                    (error, insertResult) => {
+                      if (error) {
+                        return res.json({ status: "error", msg: error });
                       }
-                    );
+                      if (insertResult) {
+                        insertCount += 1;
+                      }
+                    }
+                  );
+                } else {
+                  continue;
                 }
               }
             }
