@@ -8,40 +8,44 @@ function manageContact(conn, req, res) {
           const len = userQuery.length;
           if (len == 0) {
             query = `
-            SELECT co.*, con.* FROM co_contact con
-            JOIN company co ON con.co_id = co.co_id
+            SELECT co.*, con.*
+            FROM company co
+            JOIN co_contact con ON con.co_id = co.co_id
             WHERE con.contact_name IS NOT NULL
-            AND NOT con.contact_name = ""
-            ORDER BY co.co_name
+            AND con.contact_name != ''
+            ORDER BY co.co_name;
             `;
           } else {
             query = `
-            SELECT co.*, con.* FROM co_contact con
-            JOIN company co ON con.co_id = co.co_id
-            WHERE co.co_name LIKE "%${userQuery}%"
-            AND con.contact_name IS NOT NULL
-            AND NOT con.contact_name = ""
-            ORDER BY co.co_name
+            SELECT co.*, con.* 
+            FROM co_contact con 
+            JOIN company co ON con.co_id = co.co_id 
+            WHERE co.co_id LIKE '${userQuery}%'
+            AND con.contact_name IS NOT NULL 
+            AND con.contact_name != '' 
+            ORDER BY co.co_name;
             `;
           }
         } else {
           const len = userQuery.length;
           if (len == 0) {
             query = `
-            SELECT co.*, con.* FROM co_contact con
-            JOIN company co ON con.co_id = co.co_id
+            SELECT co.*, con.*
+            FROM company co
+            JOIN co_contact con ON con.co_id = co.co_id
             WHERE con.contact_name IS NOT NULL
-            AND NOT con.contact_name = ""
-            ORDER BY co.co_name
+            AND con.contact_name != ''
+            ORDER BY co.co_name;
             `;
           } else {
             query = `
-            SELECT co.*, con.* FROM co_contact con
-            JOIN company co ON con.co_id = co.co_id
-            WHERE co.co_id LIKE "${userQuery}%"
-            AND con.contact_name IS NOT NULL
-            AND NOT con.contact_name = ""
-            ORDER BY co.co_name
+            SELECT co.*, con.* 
+            FROM co_contact con 
+            JOIN company co ON con.co_id = co.co_id 
+            WHERE co.co_id LIKE '${userQuery}%'
+            AND con.contact_name IS NOT NULL 
+            AND con.contact_name != '' 
+            ORDER BY co.co_name;
             `;
           }
         }
