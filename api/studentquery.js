@@ -3,9 +3,11 @@ function studentquery(conn, req, res) {
 
   const detectID = () => {
     if (isNaN(id)) {
-      return `(u.fname LIKE '%${id}%' OR u.lname LIKE '%${id}%') `;
+      return `(u.fname LIKE ? OR u.lname LIKE ?)`;
+    } else if (id.length !== 3) {
+      return `u.username LIKE CONCAT(?, '%')`;
     } else {
-      return `(u.username LIKE "${id}%" OR u.username LIKE "%${id}") `;
+      return `u.username LIKE CONCAT('%', ?)`; // Modified for finding id in right
     }
   };
 
@@ -19,7 +21,9 @@ function studentquery(conn, req, res) {
       ORDER BY u.username
       `;
 
-  conn.query(query, (err, result) => {
+  const parameter = isNaN(id) ? [`%${id}%`, `%${id}%`] : id; // Adjust parameter based on id type
+
+  conn.query(query, parameter, (err, result) => {
     if (err) {
       return res.json({ status: "error", msg: err.message });
     }
@@ -30,5 +34,6 @@ function studentquery(conn, req, res) {
     }
   });
 }
+
 
 module.exports = { studentquery };
