@@ -150,7 +150,7 @@ const uploadCompanyData = async (conn, fieldName, filePath, res) => {
 
               if (result.length > 0) {
                 let updateQuery = `
-                UPDATE comment
+                UPDATE comments
                 SET comment = ?
                 WHERE co_id = ? AND std_id = ?
                 `;
@@ -168,7 +168,7 @@ const uploadCompanyData = async (conn, fieldName, filePath, res) => {
                 );
               } else {
                 let insertQuery = `
-                    INSERT INTO comment (co_id, std_id, comment)
+                    INSERT INTO comments (co_id, std_id, comment)
                     VALUES (?, ?, ?)`;
 
                 conn.query(

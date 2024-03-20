@@ -8,7 +8,7 @@ function resetPassword(conn, req, res) {
           return res.json({ status: "error", msg: err.message });
         } else if (result.length == 1) {
           if (result[0].password == oldPassword) {
-            const query2 = "UPDATE user SET password = ? WHERE username = ?";
+            const query2 = "UPDATE users SET password = ? WHERE username = ?";
             conn.query(query2, [newPassword, username], (err, result) => {
               if (err) {
                 return res.json({ status: "error", msg: err.message });
