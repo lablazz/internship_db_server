@@ -11,7 +11,7 @@ function manageStudent(conn, req, res) {
                     query = `
                     SELECT * FROM users WHERE NOT role = 'adm'
                     ORDER BY username
-                `;
+                    `;
                 } else {
                     query = `
                         SELECT * FROM users WHERE (fname LIKE "%${userQuery}%"
@@ -28,12 +28,17 @@ function manageStudent(conn, req, res) {
                         AND NOT role = 'adm'
                         ORDER BY username
                     `;
-                } else if (len <= 9) {
+                } else if (len <= 9 && len !== 0) {
                     query = `
                         SELECT * FROM users WHERE username LIKE "${userQuery}%"
                         AND NOT role = 'adm'
                         ORDER BY username
                     `;
+                } else if (len == 0) {
+                    query = `
+                    SELECT * FROM users WHERE NOT role = 'adm'
+                    ORDER BY username
+                    `
                 }
             }
             conn.query(query, (err, result) => {

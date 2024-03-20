@@ -18,10 +18,18 @@ function manageCompany(conn, req, res) {
           `;
         }
       } else {
-        query = `
-        SELECT * from company WHERE co_id LIKE "${userQuery}%"
-        ORDER BY  co_name
-        `;
+        const len = userQuery.length;
+        if (len == 0) {
+          query = `
+          SELECT * from company
+          ORDER BY  co_name
+          `;
+        } else {
+          query = `
+          SELECT * from company WHERE co_id LIKE "${userQuery}%"
+          ORDER BY  co_name
+          `;
+        }
       }
       conn.query(query, (err, result) => {
         if (err) {
