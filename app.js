@@ -55,8 +55,9 @@ const storage = multer.diskStorage({
 
 let upload = multer({ storage: storage });
 
-const allowedOrigins = ['http://localhost:5173', process.env.FRONT_PATH];
-const corsOptions = {
+const allowedOrigins = ['https://internship-db-client.vercel.app', 'http://localhost:5173'];
+
+app.use(cors({
   origin: function (origin, callback) {
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
@@ -64,7 +65,7 @@ const corsOptions = {
       callback(new Error('Not allowed by CORS'));
     }
   }
-};
+}));
 
 app.use(cors(corsOptions));
 
