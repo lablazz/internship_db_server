@@ -1,14 +1,22 @@
 function manageCompany(conn, req, res) {
   const { action, userQuery, data } = req.body;
-//   console.log(userQuery)
+  //   console.log(userQuery)
   if (action == "fetch") {
     try {
       let query;
       if (isNaN(userQuery)) {
-        query = `
-        SELECT * FROM company WHERE co_name LIKE "%${userQuery}%"
-        ORDER BY co_name
-        `;
+        const len = userQuery.length;
+        if (len == 0) {
+          query = `
+          SELECT * FROM company
+          ORDER BY co_name
+          `;
+        } else {
+          query = `
+          SELECT * FROM company WHERE co_name LIKE "%${userQuery}%"
+          ORDER BY co_name
+          `;
+        }
       } else {
         query = `
         SELECT * from company WHERE co_id LIKE "${userQuery}%"

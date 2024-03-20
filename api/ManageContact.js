@@ -5,14 +5,25 @@ function manageContact(conn, req, res) {
       try {
         let query;
         if (isNaN(userQuery)) {
-          query = `
-          SELECT co.*, con.* FROM co_contact con
-          JOIN company co ON con.co_id = co.co_id
-          WHERE co.co_name LIKE "%${userQuery}%"
-          AND con.contact_name IS NOT NULL
-          AND NOT con.contact_name = ""
-          ORDER BY co.co_name
-          `;
+          const len = userQuery.length;
+          if (len == 0) {
+            query = `
+            SELECT co.*, con.* FROM co_contact con
+            JOIN company co ON con.co_id = co.co_id
+            WHERE con.contact_name IS NOT NULL
+            AND NOT con.contact_name = ""
+            ORDER BY co.co_name
+            `;
+          } else {
+            query = `
+            SELECT co.*, con.* FROM co_contact con
+            JOIN company co ON con.co_id = co.co_id
+            WHERE co.co_name LIKE "%${userQuery}%"
+            AND con.contact_name IS NOT NULL
+            AND NOT con.contact_name = ""
+            ORDER BY co.co_name
+            `;
+          }
         } else {
           query = `
           SELECT co.*, con.* FROM co_contact con

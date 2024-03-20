@@ -6,12 +6,20 @@ function manageStudent(conn, req, res) {
         try {
             let query;
             if (isNaN(userQuery)) { // Check if userQuery is not a number
-                query = `
-                    SELECT * FROM users WHERE (fname LIKE "%${userQuery}%"
-                    OR lname LIKE "%${userQuery}%")
-                    AND NOT role = 'adm'
+                const len = userQuery.length;
+                if (len == 0) {
+                    query = `
+                    SELECT * FROM users WHERE NOT role = 'adm'
                     ORDER BY username
                 `;
+                } else {
+                    query = `
+                        SELECT * FROM users WHERE (fname LIKE "%${userQuery}%"
+                        OR lname LIKE "%${userQuery}%")
+                        AND NOT role = 'adm'
+                        ORDER BY username
+                    `;
+                }
             } else {
                 const len = userQuery.length;
                 if (len == 3) {
