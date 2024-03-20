@@ -105,37 +105,37 @@ function fetchSearchResult(conn, req, res) {
 
 function fetchCoDetails(conn, req, res) {
   const { co_id } = req.body;
-  let query = `
-  SELECT DISTINCT co.co_id, co.co_name,
-  istd.std_id, u.fname, u.lname,
-  istd.intern_type, c.comment 
-  FROM company co
-  JOIN senior_intern istd ON co.co_id = istd.co_id
-  LEFT JOIN users u ON istd.std_id = u.username
-  LEFT JOIN comments c ON istd.std_id = c.std_id
-  WHERE co.co_id = '${co_id}' 
-  AND istd.intern_type <> '' 
-  AND istd.std_id <> ''
-  ORDER BY istd.std_id;
-  `;
-
+  
   try {
+    const query = `
+    SELECT DISTINCT co.co_id, co.co_name,
+    istd.std_id, u.fname, u.lname,
+    istd.intern_type, c.comment 
+    FROM company co
+    JOIN senior_intern istd ON co.co_id = istd.co_id
+    LEFT JOIN users u ON istd.std_id = u.username
+    LEFT JOIN comments c ON istd.std_id = c.std_id
+    WHERE co.co_id = ? AND istd.intern_type IS NOT NULL AND istd.intern_type <> '' 
+    AND istd.std_id IS NOT NULL AND istd.std_id <> ''
+    ORDER BY istd.std_id;
+    `;
     conn.query(query, [co_id], (err, result) => {
       if (err) {
-        return res.json({ status: "error", msg: err.message });
+        return res.status(500).json({ status: "error", msg: err });
       }
 
       if (result.length > 0) {
-        let contactQuery = `
+        const contactQuery = `
         SELECT DISTINCT *
         FROM co_contact
-        WHERE co_id = ? AND NOT contact_name = ''
-        AND ((NOT contact_tel = "") OR (NOT email = ""))
-        ORDER BY department
-        `
-        conn.query(contactQuery, [co_id], (err, contact)=>{
+        WHERE co_id = ? 
+              AND NOT contact_name = '' 
+              AND ((NOT contact_tel = '') OR (NOT email = ''))
+        ORDER BY department;
+        `;
+        conn.query(contactQuery, [co_id], (err, contact) => {
           if (err) {
-            return res.json({ status: "error", msg: err.message });
+            return res.status(500).json({ status: "error", msg: err });
           }
           return res.json({
             status: "founded",
@@ -143,13 +143,13 @@ function fetchCoDetails(conn, req, res) {
             data: result,
             contact: contact
           });
-        })
+        });
       } else {
         return res.json({ status: "no match" });
       }
     });
   } catch (error) {
-    return res.json({ status: "error", msg: "Something went wrong!" });
+    return res.status(500).json({ status: "error", msg: "Something went wrong!" });
   }
 }
 
