@@ -55,11 +55,19 @@ const storage = multer.diskStorage({
 
 let upload = multer({ storage: storage });
 
+const allowedOrigins = ['http://localhost:5173', process.env.FRONT_PATH];
 const corsOptions = {
-  origin: process.env.FRONT_PATH,
-  credentials: true,
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  }
 };
+
 app.use(cors(corsOptions));
+
 app.use(jsonParser);
 
 // api import
@@ -93,7 +101,7 @@ app.get('/', (req, res)=>{
 })
 
 app.get('/users', (req, res, next)=>{
-  let query = "SELECT * FROM users"
+  let query = "SELECT username FROM users"
   conn.query(query, (err, result)=>{
     if (err) {
       return res.json({ status: "error", msg: err });
