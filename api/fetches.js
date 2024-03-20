@@ -113,11 +113,9 @@ function fetchCoDetails(conn, req, res) {
   JOIN senior_intern istd ON co.co_id = istd.co_id
   LEFT JOIN users u ON istd.std_id = u.username
   LEFT JOIN comments c ON istd.std_id = c.std_id
-  WHERE co.co_id = ?
-  AND istd.intern_type IS NOT NULL
-  AND istd.std_id IS NOT NULL
-  AND istd.intern_type != ''
-  AND istd.std_id != ''
+  WHERE co.co_id = '${co_id}' 
+  AND istd.intern_type <> '' 
+  AND istd.std_id <> ''
   ORDER BY istd.std_id;
   `;
 
