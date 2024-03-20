@@ -1,31 +1,8 @@
-const { login } = require("./api/login");
-const { upComing } = require("./api/up-coming");
-const { getfiles } = require("./api/getfiles");
-const { getWishlist } = require("./api/getWishlist");
-const { manageWishList } = require("./api/manageWishList");
-const {
-  fetchprv,
-  fetchType,
-  fetchSearchResult,
-  fetchCoDetails,
-  fetchMinor,
-} = require("./api/fetches");
-const { editCo } = require("./api/editCo");
-const { updateUser } = require("./api/updateUser");
-const { resetPassword } = require("./api/resetPassword");
-const { docsManage } = require("./api/docsManage");
-const { manageTime } = require("./api/manageTime");
-const { studentquery } = require("./api/studentquery");
-const { uploadCompanyData } = require("./api/uploadCompanyData");
-const { uploadStudentCSV } = require("./api/uploadSudentCSV");
-const { manageStudent } = require("./api/manageStudent");
-const { manageCompany } = require("./api/manageCompany");
-const { manageContact } = require("./api/ManageContact");
-
 var express = require("express");
 var cors = require("cors");
 var app = express();
 var dotenv = require("dotenv");
+const fs = require('fs')
 
 const path = require("path");
 
@@ -38,27 +15,28 @@ const mysql = require("mysql2");
 
 dotenv.config();
 
-let pool = mysql.createPool({
-  connectionLimit: 10,
+const sslOptions = {
+  ca: fs.readFileSync('./ca.pem'),
+  // cert: fs.readFileSync('/path/to/client-cert.pem'),
+  // key: fs.readFileSync('/path/to/client-key.pem'),
+};
+
+const conn = mysql.createPool({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  connectTimeout: 10000, // Increase connect timeout as needed
+  port: process.env.PORT,
+  ssl: sslOptions
 });
 
-pool.on('error', (err) => {
-  console.error('MySQL Pool Error:', err);
-});
-
-// Log when a connection is created
-pool.on('connection', (connection) => {
-  console.log('New connection created:', connection.threadId);
-});
-
-// Log when a connection is released
-pool.on('release', (connection) => {
-  console.log('Connection released:', connection.threadId);
+conn.getConnection((err, connection) => {
+  if (err) {
+    console.error('Error connecting to MySQL:', err);
+    return;
+  }
+  console.log('Connected to MySQL database!');
+  connection.release();
 });
 
 // multer config
@@ -84,197 +62,115 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(jsonParser);
 
+// api import
+
+const { login } = require("./api/login");
+const { upComing } = require("./api/up-coming");
+const { getfiles } = require("./api/getfiles");
+const { getWishlist } = require("./api/getWishlist");
+const { manageWishList } = require("./api/manageWishList");
+const {
+  fetchprv,
+  fetchType,
+  fetchSearchResult,
+  fetchCoDetails,
+  fetchMinor,
+} = require("./api/fetches");
+const { editCo } = require("./api/editCo");
+const { updateUser } = require("./api/updateUser");
+const { resetPassword } = require("./api/resetPassword");
+const { docsManage } = require("./api/docsManage");
+const { manageTime } = require("./api/manageTime");
+const { studentquery } = require("./api/studentquery");
+const { uploadCompanyData } = require("./api/uploadCompanyData");
+const { uploadStudentCSV } = require("./api/uploadSudentCSV");
+const { manageStudent } = require("./api/manageStudent");
+const { manageCompany } = require("./api/manageCompany");
+const { manageContact } = require("./api/ManageContact");
+
 app.get('/', (req, res)=>{
   res.send("Connected to web server")
+})
+
+app.get('/users', (req, res, next)=>{
+  let query = "SELECT * FROM users"
+  conn.query(query, (err, result)=>{
+    if (err) {
+      return res.json({ status: "error", msg: err });
+    } else {
+      return res.json({status: 'founded', result})
+    }
+  })
 })
 
 // api path
 
 app.post("/login", (req, res, next) => {
-  pool.getConnection(function(err, conn) {
-    if (err) {
-      console.error('Error getting MySQL connection from pool:', err);
-      return next(err);
-    }
-    login(conn, req, res, next);
-    conn.release();
-  });
+  login(conn, req, res, next);
 });
 
 app.post("/upcoming-event", (req, res) => {
-  pool.getConnection(function(err, conn) {
-    if (err) {
-      console.error('Error getting MySQL connection from pool:', err);
-      return next(err);
-    }
-    upComing(conn, req, res);
-    conn.release();
-  });
+  upComing(conn, req, res);
 });
 
 app.post("/getfiles", (req, res) => {
-  pool.getConnection(function(err, conn) {
-    if (err) {
-      console.error('Error getting MySQL connection from pool:', err);
-      return next(err);
-    }
-    getfiles(conn, req, res);
-    conn.release();
-  });
+  getfiles(conn, req, res);
 });
 
 app.post("/getWishlist", (req, res) => {
-  pool.getConnection(function(err, conn) {
-    if (err) {
-      console.error('Error getting MySQL connection from pool:', err);
-      return next(err);
-    }
-    getWishlist(conn, req, res);
-    conn.release();
-  });
+  getWishlist(conn, req, res);
 });
 
 app.post("/manageWishList", (req, res) => {
-  pool.getConnection(function(err, conn) {
-    if (err) {
-      console.error('Error getting MySQL connection from pool:', err);
-      return next(err);
-    }
-    manageWishList(conn, req, res);
-    conn.release();
-  });
+  manageWishList(conn, req, res);
 });
 
 app.post("/fetchprv", (req, res, next) => {
-  pool.getConnection(function(err, conn) {
-    if (err) {
-      console.error('Error getting MySQL connection from pool:', err);
-      return next(err);
-    }
-    fetchprv(conn, req, res);
-    conn.release();
-  });
+  fetchprv(conn, req, res);
 });
 
 app.post("/fetchType", (req, res, next) => {
-  pool.getConnection(function(err, conn) {
-    if (err) {
-      console.error('Error getting MySQL connection from pool:', err);
-      return next(err);
-    }
-    fetchType(conn, req, res);
-    conn.release();
-  });
+  fetchType(conn, req, res);
 });
 
 app.post("/fetchSearchResult", (req, res, next) => {
-  pool.getConnection(function(err, conn) {
-    if (err) {
-      console.error('Error getting MySQL connection from pool:', err);
-      return next(err);
-    }
-    fetchSearchResult(conn, req, res);
-    conn.release();
-  });
+  fetchSearchResult(conn, req, res);
 });
 
 app.post("/fetchCoDetails", (req, res, next) => {
-  pool.getConnection(function(err, conn) {
-    if (err) {
-      console.error('Error getting MySQL connection from pool:', err);
-      return next(err);
-    }
-    fetchCoDetails(conn, req, res);
-    conn.release();
-  });
+  fetchCoDetails(conn, req, res);
 });
 
 app.post("/editCo", (req, res, next) => {
-    pool.getConnection(function(err, conn) {
-    if (err) {
-      console.error('Error getting MySQL connection from pool:', err);
-      return next(err);
-    }
-    editCo(conn, req, res);
-    conn.release();
-  });
+  editCo(conn, req, res);
 });
 
 app.post("/updateUser", (req, res, next) => {
-    pool.getConnection(function(err, conn) {
-    if (err) {
-      console.error('Error getting MySQL connection from pool:', err);
-      return next(err);
-    }
-    updateUser(conn, req, res);
-    conn.release();
-  });
+  updateUser(conn, req, res);
 });
 
 app.post("/resetPassword", (req, res, next) => {
-    pool.getConnection(function(err, conn) {
-    if (err) {
-      console.error('Error getting MySQL connection from pool:', err);
-      return next(err);
-    }
-    resetPassword(conn, req, res);
-    conn.release();
-  });
+  resetPassword(conn, req, res);
 });
 
 app.post("/docsManage", (req, res, next) => {
-    pool.getConnection(function(err, conn) {
-    if (err) {
-      console.error('Error getting MySQL connection from pool:', err);
-      return next(err);
-    }
-    docsManage(conn, req, res);
-    conn.release();
-  });
+  docsManage(conn, req, res);
 });
 
 app.post("/manageTime", (req, res, next) => {
-    pool.getConnection(function(err, conn) {
-    if (err) {
-      console.error('Error getting MySQL connection from pool:', err);
-      return next(err);
-    }
-    manageTime(conn, req, res);
-    conn.release();
-  });
+  manageTime(conn, req, res);
 });
 
 app.post("/fetchMinor", (req, res) => {
-    pool.getConnection(function(err, conn) {
-    if (err) {
-      console.error('Error getting MySQL connection from pool:', err);
-      return next(err);
-    }
-    fetchMinor(conn, req, res);
-    conn.release();
-  });
+  fetchMinor(conn, req, res);
 });
 
 app.post("/studentquery", (req, res) => {
-    pool.getConnection(function(err, conn) {
-    if (err) {
-      console.error('Error getting MySQL connection from pool:', err);
-      return next(err);
-    }
-    studentquery(conn, req, res);
-    conn.release();
-  });
+  studentquery(conn, req, res);
 });
 
 app.post("/uploadStudentCSV", upload.single("studentCSV"), (req, res) => {
-    pool.getConnection(function(err, conn) {
-    if (err) {
-      console.error('Error getting MySQL connection from pool:', err);
-      return next(err);
-    }
-    uploadStudentCSV(conn, req, res)
-    conn.release();
-  });
+  uploadStudentCSV(conn, req, res)
 });
 
 app.post(
@@ -308,14 +204,7 @@ app.post(
       const fieldName = uploadedFields[0];
       const filePath = req.files[fieldName][0].path;
 
-      pool.getConnection(function(err, conn) {
-        if (err) {
-          console.error('Error getting MySQL connection from pool:', err);
-          return next(err);
-        }
-        uploadCompanyData(conn, fieldName, filePath, res);
-        conn.release();
-      });
+      uploadCompanyData(conn, fieldName, filePath, res);
     } catch (error) {
       console.error("Error handling file upload:", error);
       res.status(500).send("Internal Server Error");
@@ -324,36 +213,15 @@ app.post(
 );
 
 app.post('/manageStudent', (req, res)=>{
-    pool.getConnection(function(err, conn) {
-    if (err) {
-      console.error('Error getting MySQL connection from pool:', err);
-      return next(err);
-    }
-    manageStudent(conn, req, res)
-    conn.release();
-  });
+  manageStudent(conn, req, res)
 })
 
 app.post('/manageCompany', (req, res)=>{
-    pool.getConnection(function(err, conn) {
-    if (err) {
-      console.error('Error getting MySQL connection from pool:', err);
-      return next(err);
-    }
-    manageCompany(conn, req, res)
-    conn.release();
-  });
+  manageCompany(conn, req, res)
 })
 
 app.post('/manageContact', (req, res)=>{
-    pool.getConnection(function(err, conn) {
-    if (err) {
-      console.error('Error getting MySQL connection from pool:', err);
-      return next(err);
-    }
-    manageContact(conn, req, res)
-    conn.release();
-  });
+  manageContact(conn, req, res)
 })
 
 app.listen(process.env.PORT, function () {
