@@ -154,7 +154,8 @@ function fetchCoDetails(conn, req, res) {
 }
 
 function fetchMinor(conn, req, res) {
-  let query = 'SELECT DISTINCT minor FROM users WHERE minor IS NOT NULL AND NOT minor = "" ORDER BY minor'
+  let query = `SELECT DISTINCT minor FROM users 
+  WHERE minor IS NOT NULL AND minor <> '' ORDER BY minor;`
   conn.query(query, (err, result)=>{
     if (err) {
       return res.json({ status: "error", msg: err.message });
