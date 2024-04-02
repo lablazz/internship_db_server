@@ -39,61 +39,75 @@ function fetchType(conn, req, res) {
 
 function fetchSearchResult(conn, req, res) {
   const { querytxt, prv, view, intern, coop, priv, grov } = req.body;
-  // console.log(querytxt, prv, view, intern, coop, priv, grov);
 
-  const internTypeFilter = () => {
-    if ((intern && coop) || (!intern && !coop)) {
-      return "istd.intern_type IN ('ฝึกงาน', 'สหกิจ')";
-    } else if (intern) {
-      return "istd.intern_type IN ('ฝึกงาน')";
-    } else if (coop) {
-      return "istd.intern_type IN ('สหกิจ')";
+  let query = `
+  SELECT DISTINCT co.* FROM company co
+`;
+
+  if (view) {
+    query += `
+    JOIN senior_intern istd ON co.co_id = istd.co_id`;
+  }
+
+  if (querytxt || prv || view || intern || coop || priv || grov) {
+    query += " WHERE ";
+
+    if (priv && !grov) {
+      query += `(co.co_type = 'บริษัทเอกชน') AND (co.co_type <> '')`;
+    } else if (!priv && grov) {
+      query += `(co.co_type = 'ราชการ') AND (co.co_type <> '')`;
+    } else {
+      query += `(co.co_type <> '')`
     }
-  };
 
-  const coTypeFilter = () => {
-    if ((priv && grov) || (!priv && !grov)) {
-      if (view) {
-        return "AND co.co_type IN ('ราชการ', 'บริษัทเอกชน')";
-      } else {
-        return "co.co_type IN ('ราชการ', 'บริษัทเอกชน')";
+    if (view || intern || coop) {
+      if (query.includes(")")) {
+        query += " AND "
       }
-    } else if (priv) {
       if (view) {
-        return "AND co.co_type IN ('บริษัทเอกชน')";
-      } else {
-        return "co.co_type IN ('บริษัทเอกชน')";
-      }
-    } else if (grov) {
-      if (view) {
-        return "AND co.co_type IN ('ราชการ')";
-      } else {
-        return "co.co_type IN ('ราชการ')";
+        query += `(istd.intern_type <> '')`
+        if (intern && coop) {
+          query += `AND (istd.intern_type IN ('ฝึกงาน', 'สหกิจ'))`
+        } else if (intern) {
+          query += `AND (istd.intern_type = 'ฝึกงาน')`
+        } else if (coop) {
+          query += `AND (istd.intern_type = 'สหกิจ')`
+        }
       }
     }
-  };
 
-  const query = `
-    SELECT DISTINCT co.*
-    FROM company co
-    ${view ? "JOIN senior_intern istd ON co.co_id = istd.co_id" : ""}
-    ${view ? "LEFT JOIN users u ON istd.std_id = u.username" : ""}
-    WHERE ${view ? internTypeFilter() : ""}
-    ${coTypeFilter()}
-    ${prv !== "" ? `AND co.co_prv = ?` : ""}
-    ${querytxt !== "" ? `AND co.co_name LIKE "%${querytxt}%"` : ""}
-    ${view ? "AND NOT istd.std_id = ''" : ""}
-    ORDER BY co.co_name;
-  `;
-  // console.log(query)
+    if (querytxt) {
+      if (query.includes(")")) {
+        query += " AND "
+      }
+      if (isNaN(querytxt)) {
+        query += `(co.co_name LIKE '%${querytxt}%')`;
+      } else {
+        query += "(co.co_id = " + querytxt + ")";
+      }
+    }
+
+    if (prv) {
+      if (query.includes(")")) {
+        query += " AND "
+      }
+      query += `(co.co_prv = '${prv}')`
+    }
+  }
+
+  query += " ORDER BY co.co_name;";
 
   try {
-    conn.query(query, [prv], (err, result) => {
+    conn.query(query, (err, result) => {
       // console.log(err)
       if (err) {
         res.json({ status: "error", msg: err });
       } else if (result.length > 0) {
-        res.json({ status: "founded", len: result.length, data: result });
+        res.json({
+          status: "founded",
+          len: result.length,
+          data: result,
+        });
       } else {
         res.json({ status: "no match" });
       }
@@ -105,7 +119,7 @@ function fetchSearchResult(conn, req, res) {
 
 function fetchCoDetails(conn, req, res) {
   const { co_id } = req.body;
-  
+
   try {
     const query = `
     SELECT DISTINCT co.co_id, co.co_name,
@@ -141,7 +155,7 @@ function fetchCoDetails(conn, req, res) {
             status: "founded",
             count: result.length,
             data: result,
-            contact: contact
+            contact: contact,
           });
         });
       } else {
@@ -149,22 +163,30 @@ function fetchCoDetails(conn, req, res) {
       }
     });
   } catch (error) {
-    return res.status(500).json({ status: "error", msg: "Something went wrong!" });
+    return res
+      .status(500)
+      .json({ status: "error", msg: "Something went wrong!" });
   }
 }
 
 function fetchMinor(conn, req, res) {
   let query = `SELECT DISTINCT minor FROM users 
-  WHERE minor IS NOT NULL AND minor <> '' ORDER BY minor;`
-  conn.query(query, (err, result)=>{
+  WHERE minor IS NOT NULL AND minor <> '' ORDER BY minor;`;
+  conn.query(query, (err, result) => {
     if (err) {
       return res.json({ status: "error", msg: err.message });
     } else if (result.length > 0) {
-      return res.json({state: 'success', data: result})
+      return res.json({ state: "success", data: result });
     } else {
-      return res.json({status: 'notfound'})
+      return res.json({ status: "notfound" });
     }
-  })
+  });
 }
 
-module.exports = { fetchprv, fetchType, fetchSearchResult, fetchCoDetails, fetchMinor };
+module.exports = {
+  fetchprv,
+  fetchType,
+  fetchSearchResult,
+  fetchCoDetails,
+  fetchMinor,
+};

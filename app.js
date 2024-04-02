@@ -21,7 +21,7 @@ const sslOptions = {
   // key: fs.readFileSync('/path/to/client-key.pem'),
 };
 
-'http://localhost:5173,https://internship-db-client-k1dxeqflw-lablazzs-projects.vercel.app,internship-db-client-k1dxeqflw-lablazzs-projects.vercel.app,https://internship-db-client.vercel.app/,https://internship-db-client.vercel.app'
+const testSite = 'http://localhost:5173,https://internship-db-client-k1dxeqflw-lablazzs-projects.vercel.app,internship-db-client-k1dxeqflw-lablazzs-projects.vercel.app,https://internship-db-client.vercel.app/,https://internship-db-client.vercel.app'
 
 const conn = mysql.createPool({
   host: process.env.DB_HOST,
@@ -57,7 +57,7 @@ const storage = multer.diskStorage({
 
 let upload = multer({ storage: storage });
 
-const allowedOrigins = process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : [];
+const allowedOrigins = process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : testSite.split(',');
 
 const corsOptions = {
   origin: function (origin, callback) {
