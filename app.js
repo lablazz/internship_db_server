@@ -58,10 +58,15 @@ let upload = multer({ storage: storage });
 const testSite = ["http://localhost:5173"];
 const allowedOrigins = process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : testSite;
 
-console.log(allowedOrigins);
+console.log(allowedOrigins.length, typeof allowedOrigins);
 
 app.use(cors({
-  origin: allowedOrigins
+  origin: [
+    "http://localhost:5173",
+    "https://internship-db-client-8nt7i8kko-lablazzs-projects.vercel.app",
+    "https://internship-db-client-git-main-lablazzs-projects.vercel.app",
+    "https://internship-db-client-three.vercel.app/"
+  ]
 }));
 
 app.use(jsonParser);
