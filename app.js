@@ -58,7 +58,8 @@ let upload = multer({ storage: storage });
 const testSite = ["http://localhost:5173"];
 const allowedOrigins = process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : testSite;
 
-console.log(allowedOrigins.length, typeof allowedOrigins);
+console.log(allowedOrigins.length);
+console.log(typeof process.env.ALLOWED_ORIGINS)
 
 app.use(cors({
   origin: [
