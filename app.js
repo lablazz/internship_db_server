@@ -61,7 +61,12 @@ const allowedOrigins = process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS
 console.log(allowedOrigins);
 
 app.use(cors({
-  origin: allowedOrigins
+  origin: [
+    "http://localhost:5173",
+    "https://internship-db-client-8nt7i8kko-lablazzs-projects.vercel.app",
+    "https://internship-db-client-git-main-lablazzs-projects.vercel.app",
+    "https://internship-db-client-three.vercel.app/"
+  ]
 }));
 
 app.use(jsonParser);
