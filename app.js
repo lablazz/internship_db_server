@@ -22,7 +22,7 @@ const sslOptions = {
 };
 
 
-const testSite = 'internship-db-client-three.vercel.app,internship-db-client-git-main-lablazzs-projects.vercel.app,internship-db-client-8nt7i8kko-lablazzs-projects.vercel.app'
+const testSite = 'http://localhost:5173'
 
 const conn = mysql.createPool({
   host: process.env.DB_HOST,
