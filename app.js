@@ -22,7 +22,7 @@ const sslOptions = {
 };
 
 
-const testSite = 'http://localhost:5173'
+const testSite = 'http://localhost:5173,https://internship-db-client-8nt7i8kko-lablazzs-projects.vercel.app/'
 
 const conn = mysql.createPool({
   host: process.env.DB_HOST,
@@ -59,6 +59,8 @@ const storage = multer.diskStorage({
 let upload = multer({ storage: storage });
 
 const allowedOrigins = process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : testSite.split(',');
+
+console.log(allowedOrigins)
 
 const corsOptions = {
   origin: function (origin, callback) {
