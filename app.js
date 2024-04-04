@@ -21,7 +21,8 @@ const sslOptions = {
   // key: fs.readFileSync('/path/to/client-key.pem'),
 };
 
-const testSite = 'http://localhost:5173,https://internship-db-client-k1dxeqflw-lablazzs-projects.vercel.app,internship-db-client-k1dxeqflw-lablazzs-projects.vercel.app,https://internship-db-client.vercel.app/,https://internship-db-client.vercel.app'
+
+const testSite = 'internship-db-client-three.vercel.app,internship-db-client-git-main-lablazzs-projects.vercel.app,internship-db-client-8nt7i8kko-lablazzs-projects.vercel.app'
 
 const conn = mysql.createPool({
   host: process.env.DB_HOST,
