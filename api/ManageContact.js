@@ -8,7 +8,7 @@ function manageContact(conn, req, res) {
           const len = userQuery.length;
           if (len == 0) {
             query = `
-            SELECT co.*, con.*
+            SELECT DISTINCT co.*, con.*
             FROM company co
             JOIN co_contact con ON con.co_id = co.co_id
             WHERE con.contact_name IS NOT NULL
@@ -17,7 +17,7 @@ function manageContact(conn, req, res) {
             `;
           } else {
             query = `
-            SELECT co.*, con.* 
+            SELECT DISTINCT co.*, con.* 
             FROM co_contact con 
             JOIN company co ON con.co_id = co.co_id 
             WHERE co.co_id LIKE '${userQuery}%'
@@ -30,7 +30,7 @@ function manageContact(conn, req, res) {
           const len = userQuery.length;
           if (len == 0) {
             query = `
-            SELECT co.*, con.*
+            SELECT DISTINCT co.*, con.*
             FROM company co
             JOIN co_contact con ON con.co_id = co.co_id
             WHERE con.contact_name IS NOT NULL
@@ -39,7 +39,7 @@ function manageContact(conn, req, res) {
             `;
           } else {
             query = `
-            SELECT co.*, con.* 
+            SELECT DISTINCT co.*, con.* 
             FROM co_contact con 
             JOIN company co ON con.co_id = co.co_id 
             WHERE co.co_id LIKE '${userQuery}%'

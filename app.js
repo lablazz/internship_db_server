@@ -93,6 +93,7 @@ const { uploadStudentCSV } = require("./api/uploadSudentCSV");
 const { manageStudent } = require("./api/manageStudent");
 const { manageCompany } = require("./api/manageCompany");
 const { manageContact } = require("./api/ManageContact");
+const { getData } = require("./api/getData");
 
 app.get('/', (req, res)=>{
   res.send("Connected to web server")
@@ -228,6 +229,10 @@ app.post('/manageCompany', (req, res)=>{
 
 app.post('/manageContact', (req, res)=>{
   manageContact(conn, req, res)
+})
+
+app.get('/data', (req, res) => {
+  getData(conn, req, res)
 })
 
 app.listen(process.env.PORT, function () {

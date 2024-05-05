@@ -203,12 +203,15 @@ const uploadCompanyData = async (conn, fieldName, filePath, res) => {
               if (result.length > 0) {
                 let updateQuery = `
                 UPDATE senior_intern
-                SET intern_type = ?
+                SET intern_type = ${row.intern_type},
+                work_detail = ${row.work_detail},
+                salary = ${row.salary},
+                years = ${row.years}
                 WHERE co_id = ? AND std_id = ?
                 `;
                 conn.query(
                   updateQuery,
-                  [row.intern_type, row.co_id, row.std_id],
+                  [row.co_id, row.std_id],
                   (error, updateResult) => {
                     if (error) {
                       return res.json({ status: "error", msg: error });
@@ -221,12 +224,13 @@ const uploadCompanyData = async (conn, fieldName, filePath, res) => {
               } else {
                 if (row.std_id && row.co_id) {
                   let insertQuery = `
-                        INSERT INTO senior_intern (co_id, std_id, intern_type)
-                        VALUES (?, ?, ?)`;
-
+                  INSERT INTO senior_intern (co_id, std_id, intern_type,
+                  work_detail, salary, years)
+                  VALUES (?, ?, ?, ?, ?, ?)`;
                   conn.query(
                     insertQuery,
-                    [row.co_id, row.std_id, row.intern_type],
+                    [row.co_id, row.std_id, row.intern_type,
+                      row.work_detail, row.salary, row.years],
                     (error, insertResult) => {
                       if (error) {
                         return res.json({ status: "error", msg: error });
