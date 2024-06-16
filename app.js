@@ -15,11 +15,11 @@ const mysql = require("mysql2");
 
 dotenv.config();
 
-const sslOptions = {
-  ca: fs.readFileSync(process.env.CA_PER),
-  // cert: fs.readFileSync('/path/to/client-cert.pem'),
-  // key: fs.readFileSync('/path/to/client-key.pem'),
-};
+// const sslOptions = {
+//   ca: fs.readFileSync(process.env.CA_PER),
+//   // cert: fs.readFileSync('/path/to/client-cert.pem'),
+//   // key: fs.readFileSync('/path/to/client-key.pem'),
+// };
 
 const conn = mysql.createPool({
   host: process.env.DB_HOST,
@@ -27,7 +27,7 @@ const conn = mysql.createPool({
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
   port: process.env.PORT,
-  ssl: sslOptions
+  // ssl: sslOptions
 });
 
 conn.getConnection((err, connection) => {
