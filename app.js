@@ -55,8 +55,8 @@ const storage = multer.diskStorage({
 
 let upload = multer({ storage: storage });
 
-const testSite = ["http://localhost:5173"];
-const allowedOrigins = process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : testSite;
+const testSite = "http://localhost:5173";
+const allowedOrigins = process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS : testSite;
 
 // console.log(allowedOrigins.length);
 // console.log(typeof process.env.ALLOWED_ORIGINS)
