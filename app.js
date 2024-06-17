@@ -2,7 +2,7 @@ var express = require("express");
 var cors = require("cors");
 var app = express();
 var dotenv = require("dotenv");
-const fs = require('fs')
+const fs = require("fs");
 
 const path = require("path");
 
@@ -32,10 +32,10 @@ const conn = mysql.createPool({
 
 conn.getConnection((err, connection) => {
   if (err) {
-    console.error('Error connecting to MySQL:', err);
+    console.error("Error connecting to MySQL:", err);
     return;
   }
-  console.log('Connected to MySQL database!');
+  console.log("Connected to MySQL database!");
   connection.release();
 });
 
@@ -55,17 +55,27 @@ const storage = multer.diskStorage({
 
 let upload = multer({ storage: storage });
 
-const testSite = ["http://localhost:5173", "https://statcmu-internshipdb.vercel.app/"];
-const allowedOrigins = process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(",") : testSite;
+const testSite = [
+  "http://localhost:5173",
+  "https://statcmu-internshipdb.vercel.app/",
+  "https://statcmu-internshipdb-git-main-lablazzs-projects.vercel.app/",
+  "https://statcmu-internshipdb-fob97dl8l-lablazzs-projects.vercel.app",
+];
+
+const allowedOrigins = process.env.ALLOWED_ORIGINS
+  ? process.env.ALLOWED_ORIGINS.split(",")
+  : testSite;
 
 console.log("allow-cors : ", allowedOrigins);
 
-// console.log(allowedOrigins.length);
-// console.log(typeof process.env.ALLOWED_ORIGINS)
-// console.log(allowedOrigins)
-
 const corsOptions = {
-  origin: 'https://statcmu-internshipdb.vercel.app/',
+  origin: function (origin, callback) {
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
 };
 
@@ -100,20 +110,20 @@ const { manageCompany } = require("./api/manageCompany");
 const { manageContact } = require("./api/ManageContact");
 const { getData } = require("./api/getData");
 
-app.get('/', (req, res)=>{
-  res.send("Connected to web server")
-})
+app.get("/", (req, res) => {
+  res.send("Connected to web server");
+});
 
-app.get('/users', (req, res, next)=>{
-  let query = "SELECT username FROM users"
-  conn.query(query, (err, result)=>{
+app.get("/users", (req, res, next) => {
+  let query = "SELECT username FROM users";
+  conn.query(query, (err, result) => {
     if (err) {
       return res.json({ status: "error", msg: err });
     } else {
-      return res.json({status: 'founded', result})
+      return res.json({ status: "founded", result });
     }
-  })
-})
+  });
+});
 
 // api path
 
@@ -182,24 +192,24 @@ app.post("/studentquery", (req, res) => {
 });
 
 app.post("/uploadStudentCSV", upload.single("studentCSV"), (req, res) => {
-  uploadStudentCSV(conn, req, res)
+  uploadStudentCSV(conn, req, res);
 });
 
 app.post(
   "/uploadCompanyData",
   (req, res, next) => {
     upload.fields([
-      { name: 'companyName', maxCount: 1 },
-      { name: 'companyContacts', maxCount: 1 },
-      { name: 'comments', maxCount: 1 },
-      { name: 'interns', maxCount: 1}
-    ])(req, res, err => {
+      { name: "companyName", maxCount: 1 },
+      { name: "companyContacts", maxCount: 1 },
+      { name: "comments", maxCount: 1 },
+      { name: "interns", maxCount: 1 },
+    ])(req, res, (err) => {
       if (err instanceof multer.MulterError) {
         // Handle multer error
         return res.status(400).json({ error: err.message });
       } else if (err) {
         // Handle other errors
-        return res.status(500).json({ error: 'Internal Server Error' });
+        return res.status(500).json({ error: "Internal Server Error" });
       }
       // No errors, proceed to next middleware
       next();
@@ -210,7 +220,9 @@ app.post(
       const uploadedFields = Object.keys(req.files);
 
       if (uploadedFields.length !== 1) {
-        return res.status(400).json({ error: "Exactly one file should be uploaded" });
+        return res
+          .status(400)
+          .json({ error: "Exactly one file should be uploaded" });
       }
 
       const fieldName = uploadedFields[0];
@@ -224,21 +236,21 @@ app.post(
   }
 );
 
-app.post('/manageStudent', (req, res)=>{
-  manageStudent(conn, req, res)
-})
+app.post("/manageStudent", (req, res) => {
+  manageStudent(conn, req, res);
+});
 
-app.post('/manageCompany', (req, res)=>{
-  manageCompany(conn, req, res)
-})
+app.post("/manageCompany", (req, res) => {
+  manageCompany(conn, req, res);
+});
 
-app.post('/manageContact', (req, res)=>{
-  manageContact(conn, req, res)
-})
+app.post("/manageContact", (req, res) => {
+  manageContact(conn, req, res);
+});
 
-app.get('/data', (req, res) => {
-  getData(conn, req, res)
-})
+app.get("/data", (req, res) => {
+  getData(conn, req, res);
+});
 
 app.listen(process.env.PORT, function () {
   console.log(`CORS-enabled web server listening on port ${process.env.PORT}`);
