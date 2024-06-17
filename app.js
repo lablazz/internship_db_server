@@ -55,17 +55,17 @@ const storage = multer.diskStorage({
 
 let upload = multer({ storage: storage });
 
-const testSite = ["http://localhost:5173", "https://statcmu-internshipdb.vercel.app/"];
-const allowedOrigins = process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(",") : testSite;
+const testSite = ["https://statcmu-internshipdb.vercel.app/"];
+// const allowedOrigins = process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(",") : testSite;
 
-console.log("allow-cors : ", allowedOrigins);
+console.log("allow-cors : ", testSite);
 
 // console.log(allowedOrigins.length);
 // console.log(typeof process.env.ALLOWED_ORIGINS)
 // console.log(allowedOrigins)
 
 app.use(cors({
-  origin: allowedOrigins
+  origin: testSite
 }));
 
 app.use(jsonParser);
