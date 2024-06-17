@@ -70,7 +70,8 @@ console.log("allow-cors : ", allowedOrigins);
 
 const corsOptions = {
   origin: function (origin, callback) {
-    if (allowedOrigins.includes(origin)) {
+    // Check if the origin is in the allowedOrigins array or if there is no origin (like in some server-to-server requests)
+    if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
